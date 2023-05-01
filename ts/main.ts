@@ -1,5 +1,5 @@
-import BABYLON from 'babylonjs@4.2.0';
-import Peer from 'peerjs-esm@1.3.1';
+import * as BABYLON from '@babylonjs/core';
+import * as Peer from 'peerjs';
 
 interface Packet {
     type: PacketType;
@@ -23,7 +23,7 @@ class PacketType {
 
 class PacketTypeList {
     private packetTypes: Map<String, PacketType> = new Map<String, PacketType>();
-    public getPacketType(name: String): PacketType {
+    public getPacketType(name: String): PacketType | undefined {
         return this.packetTypes.get(name);
     }
     public addPacketType(packetType: PacketType): PacketTypeList {
@@ -38,8 +38,8 @@ class PacketTypeList {
     }
     public decode(data: Object): Packet {
         if (!this.isValidPacket(data))
-            throw new Error('Data recieved is not a valid packet' + data);
-        return this.getPacketType(data['id']).decode(data);
+            throw new ReferenceError('Data recieved is not a valid packet' + data);
+        return (this.getPacketType(data['id']) as PacketType).decode(data);
     }
     public isValidPacket(data: Object): boolean {
         return (
@@ -153,12 +153,12 @@ class Peer2PeerConnection {
 }
 
 class Peer2PeerGameServer implements GameServer {
-    private peer$: Peer;
-    private peerId: String;
-    private gameConnection: Peer2PeerConnection = null;
+    private peer$: Peer.Peer;
+    private peerId: string;
+    private gameConnection: Peer2PeerConnection | null = null;
     private packetTypeList$: PacketTypeList = new PacketTypeList();
 
-    private static onOpen(gPeer: Peer2PeerGameServer, peerId: String) {
+    private static onOpen(gPeer: Peer2PeerGameServer, peerId: string) {
         gPeer.peerId = peerId;
         console.log('peer open', peerId);
     }
@@ -187,7 +187,7 @@ class Peer2PeerGameServer implements GameServer {
     private static onDisconnected(gPeer: Peer2PeerGameServer) {
         console.log('peer disconnected');
         setTimeout(() => {
-            gPeer.peer = new Peer(gPeer.peerId);
+            gPeer.peer = new Peer.Peer(gPeer.peerId);
         }, 3000);
     }
 
@@ -208,7 +208,7 @@ class Peer2PeerGameServer implements GameServer {
         }
     }
 
-    public set peer(peer: Peer) {
+    public set peer(peer: Peer.Peer) {
         this.peer$ = peer;
         this.peer$.on('open', Peer2PeerGameServer.onOpen.bind(this, this));
         this.peer$.on(
@@ -224,7 +224,7 @@ class Peer2PeerGameServer implements GameServer {
         this.peer$.on('error', Peer2PeerGameServer.onError.bind(this, this));
     }
 
-    public get peer(): Peer {
+    public get peer(): Peer.Peer {
         return this.peer$;
     }
 
@@ -232,8 +232,8 @@ class Peer2PeerGameServer implements GameServer {
         return this.packetTypeList$;
     }
 
-    public constructor(peerId?: String) {
-        this.peer = new Peer(peerId);
+    public constructor(peerId: string) {
+        this.peer = new Peer.Peer(peerId);
     }
 
     public init(): void {
@@ -568,7 +568,7 @@ const createScene = function () {
 
 var server: Peer2PeerGameServer;
 
-const canvas = document.getElementById('renderCanvas'); // Get the canvas element
+const canvas = document.getElementById('renderCanvas') as HTMLCanvasElement; // Get the canvas element
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
 
 const scene = createScene(); //Call the createScene function
