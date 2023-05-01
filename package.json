@@ -1,0 +1,33 @@
+{
+    "name": "game2",
+    "version": "0.1.0",
+    "description": "Turn-based Multiplayer Combat System",
+    "keywords": [],
+    "browser": "index.html",
+    "types": "dist/main.d.ts",
+    "dependencies": {
+        "@babylonjs/core": "6.1.0",
+        "@babylonjs/loaders": "6.1.0",
+        "jquery": "3.6.4",
+        "typescript": "5.0.4"
+    },
+    "devDependencies": {
+        "@open-wc/building-rollup": "2.2.3",
+        "@rollup/plugin-node-resolve": "15.0.2",
+        "@types/jquery": "3.5.16",
+        "deepmerge": "4.3.1",
+        "http-server": "14.1.1",
+        "rimraf": "5.0.0",
+        "rollup": "3.21.2",
+        "rollup-plugin-typescript2": "0.34.1"
+    },
+    "scripts": {
+        "build": "rimraf dist && rollup -c rollup.config.js",
+        "server": "yarn run http-server"
+    },
+    "repository": "https://github.com/Codetoil/Game2.git",
+    "author": "Anthony Michalek (Codetoil) <ianthisawesomee@gmail.com>",
+    "license": "UNLICENSED",
+    "private": true,
+    "type": "module"
+}
